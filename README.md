@@ -1,6 +1,4 @@
-# SearchEngine
-
-![Search Data](https://github.com/Archeeyadav/SearchEngine/blob/main/home.png?raw=true)
+# Task2
 
 ## Requirements
 
@@ -12,7 +10,7 @@
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/Archeeyadav/SearchEngine.git
+    git clone  https://github.com/Archeeyadav/Task2.git
     cd SearchEngine
     ```
 
