@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Categories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; /* Center align the content */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 0 auto; /* Center align the table */
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        h1 {
+            color: #000007;
+        }
+ 
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        .search-box {
+            display: flex;
+            flex-direction: column; 
+            margin: 10px; 
+            padding: 10px; 
+        }
+
+        .search-box label {
+            margin-right: 10px;
+            padding: 10px;
+        }
+
+        .search-box input[type="text"] {
+            padding: 15px;
+        }
+
+        .search-button {
+            padding: 5px 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .separator {
+            margin: 0 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Car Categories</h1>
+    <h3>We help you find the best Vehicle</h3>
+
+    <div class="container">
+        <div class="search-box">
+            <label for="searchBar1">What are you looking for?</label>
+            <input id="searchBar1" type="text" placeholder="Search here">
+        </div>
+        <span class="separator">OR</span>
+        <div class="search-box">
+            <label for="searchBar2">What specs are you looking for?</label>
+            <input id="searchBar2" type="text" placeholder="Search here">
+        </div>
+        <span class="separator">OR</span>
+        <div class="search-box">
+            <label for="searchBar3">What type of car are you looking for?</label>
+            <input id="searchBar3" type="text" placeholder="Search here">
+        </div>
+        <button class="search-button" type="button">Search</button>
+    </div>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Company</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>PPC Score</th>
+        </tr>
+        <tbody id="data">
+            {% for row in search_results %}
+            <tr>
+                <td>{{row.id}}</td>
+                <td>{{row.company}}</td>
+                <td>{{row.category}}</td>
+                <td>{{row.car_type}}</td>
+                <td>{{row.ppc_score}}</td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        // Function to update the table with API data
+        function updateTable(data) {
+            const tableBody = $('#data');
+            tableBody.empty(); // Clear existing data
+
+            if (data.length === 0) {
+                tableBody.append('<tr><td colspan="5">No results found.</td></tr>');
+            } else {
+                $.each(data, function(index, row) {
+                    tableBody.append(`
+                        <tr>
+                            <td>${row.id}</td>
+                            <td>${row.company}</td>
+                            <td>${row.category}</td>
+                            <td>${row.car_type}</td>
+                            <td>${row.ppc_score}</td>
+                        </tr>
+                    `);
+                });
+            }
+        }
+
+        // Function to handle the search button click
+        $('.search-button').click(function() {
+            const looking_for = $('#searchBar1').val();
+            const specifications = $('#searchBar2').val();
+            const car_type = $('#searchBar3').val();
+            const keywords = `${looking_for}`;
+
+            // Make an API request with the search parameters
+            $.ajax({
+                url: '/api/v1/car-list/',
+                type: 'GET',
+                data: {
+                    looking_for: looking_for,
+                    specifications__icontains: specifications,
+                    car_type__icontains: car_type,
+                    keywords: keywords
+                },
+                success: function(data) {
+                    // Update the table with the API data
+                    updateTable(data);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
